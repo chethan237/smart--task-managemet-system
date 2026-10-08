@@ -43,19 +43,21 @@ pipeline {
         }
 
         stage('SonarQube Scan') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh """
-                    ${SCANNER_HOME}/bin/sonar-scanner \
-                    -Dsonar.projectKey=Smart-Task-Management-System02 \
-                    -Dsonar.projectName=Smart-Task-Management-System02 \
-                    -Dsonar.sources=. \
-                    -Dsonar.sourceEncoding=UTF-8
-                    """
-                }
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                sh """
+                ${SCANNER_HOME}/bin/sonar-scanner \
+                -Dsonar.projectKey=Smart-Task-Management-System02 \
+                -Dsonar.projectName=Smart-Task-Management-System02 \
+                -Dsonar.sources=. \
+                -Dsonar.sourceEncoding=UTF-8 \
+                -Dsonar.token=$SONAR_TOKEN
+                """
             }
         }
-
+    }
+}
         stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
