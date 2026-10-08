@@ -27,6 +27,16 @@ pipeline {
                 '''
             }
         }
+         
+         stage('Terraform Deploy') {
+            steps {
+               sh '''
+               cd terraform
+               terraform init
+               terraform apply -auto-approve
+               '''
+           }
+      }
  
         stage('Helm Lint') {
             steps {
